@@ -1,0 +1,83 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+FUNCTION_BLOCK FB_OrderParser
+VAR_INPUT
+	bParse:BOOL;
+	orderData:typ_OrderData;
+	bAssemblyBusy:BOOL;
+	
+	
+END_VAR
+VAR_OUTPUT
+	bAssemble:BOOL;
+	bError:BOOL;
+	
+	
+END_VAR
+VAR
+	orderPassed: bool;
+	z: INT;
+	orderDataout: ARRAY [1..100] OF typ_OrderData;
+	last5:ARRAY [1..5] OF typ_OrderData;
+	orderDataout_1: typ_OrderData;
+	orderTrig: R_TRIG;
+	Step:INT:=0;
+	pFB_Server_1: POINTER TO FB_WEBSERVER; 
+	apFB_AssemblyLine_1:ARRAY[0..4] OF POINTER TO FB_ASSEMBLYLINE;
+	ord_Parsed: INT;
+	l:INT:=0;
+	c:STRING;
+	j:INT:=0;
+	k:INT;
+	m:INT:=1;
+	q:INT:=1;
+	v:INT:=1;
+END_VAR
+
+	
+	
+(*#-#-#-#-#-#-#-#-#-#---Implementation---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+IF m=6 THEN
+		m:=1;
+END_IF
+IF pFB_Server^.newOrder THEN
+	j:=j+1;
+	pOrderData:=pFB_Server^.orderData;
+	orderDataout[j] := pOrderData;
+	pFB_Server^.newOrder:=FALSE;
+	last5[m]:= pOrderData;
+	last5[m].status:='Queued';
+ELSIF j>0 THEN
+	orderPassed := FALSE;
+	FOR k:=1 TO j BY 1 DO
+		FOR l:= 0 TO 4 BY 1 DO		
+			IF apFB_AssemblyLine_1[l]^.AssembleOrder(ADR(orderDataout[k])) THEN
+				last5[m].status:='Assembling';
+				last5[m].asmLine:=INT_TO_STRING(l);
+				FOR z:= k TO j DO
+					orderDataout[z]:=orderDataout[z+1];
+					orderPassed:= TRUE;
+					ord_Parsed:=ord_Parsed+1;
+				END_FOR
+				j:=j-1;
+			END_IF
+			IF orderPassed THEN
+				EXIT;
+			END_IF
+		END_FOR
+		IF orderPassed THEN
+			EXIT;
+		END_IF		
+	END_FOR
+	m:=m+1;
+END_IF
+FOR q:=0 TO 4 BY 1 DO
+	IF apFB_AssemblyLine_1[q]^.asmStat THEN
+		FOR v:=1 TO 5 BY 1 DO
+			IF last5[v].status='Assembling' THEN
+				IF STRING_TO_INT(last5[v].asmLine)=q THEN
+				last5[v].status:='Done';
+				END_IF
+			END_IF
+		END_FOR
+	END_IF
+END_FOR

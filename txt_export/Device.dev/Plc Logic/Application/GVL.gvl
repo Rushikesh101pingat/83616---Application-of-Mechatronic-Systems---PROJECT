@@ -1,0 +1,5 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+{attribute 'qualified_only'}
+VAR_GLOBAL
+	OPCUA_Server: FB_OPCUA_Server;
+END_VAR

@@ -1,0 +1,10 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+TYPE typ_accStats :
+STRUCT
+	uiGPS:UINT;
+	uiLights:UINT;
+	uiBell:UINT;
+	uiLock:UINT;
+	uiSpeedo:UINT;
+END_STRUCT
+END_TYPE

@@ -1,0 +1,13 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+{attribute 'qualified_only'}
+{attribute 'to_string'}
+TYPE eAccessories :
+(
+	GPS := 1,
+	Lights,
+	Bell,
+	Lock,
+	Speedometer,
+	None
+)DINT:=GPS;
+END_TYPE

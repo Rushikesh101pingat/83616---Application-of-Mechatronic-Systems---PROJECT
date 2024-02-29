@@ -1,0 +1,11 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+TYPE typ_OrderData :
+STRUCT
+	ulOrderNo: INT := 0;
+	uiQty: INT;
+	eType: STRING;
+	aeAccessories: ARRAY [1..4] OF STRING;
+	status: STRING:='NA';
+	asmLine: STRING:='NA';
+END_STRUCT
+END_TYPE

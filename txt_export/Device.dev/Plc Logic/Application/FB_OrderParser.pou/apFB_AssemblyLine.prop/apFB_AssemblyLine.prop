@@ -1,0 +1,2 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+PROPERTY apFB_AssemblyLine : ARRAY[0..4] OF POINTER TO FB_ASSEMBLYLINE

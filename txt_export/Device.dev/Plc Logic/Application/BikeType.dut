@@ -1,0 +1,12 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+{attribute 'qualified_only'}
+{attribute 'to_string'}
+
+TYPE BikeType :
+(
+	BMX := 1,
+	Electric,
+	Folding,
+	Road
+)DINT:=BMX;
+END_TYPE

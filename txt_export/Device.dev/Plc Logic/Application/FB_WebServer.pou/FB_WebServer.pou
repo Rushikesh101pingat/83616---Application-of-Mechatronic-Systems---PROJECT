@@ -1,0 +1,56 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+FUNCTION_BLOCK FB_WebServer
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	bNewOrder:BOOL;
+	orderData_1:typ_OrderData;
+	b:DINT;
+	ARR2:ARRAY [1..4] OF DINT;
+END_VAR
+VAR
+	i: INT:=1;
+	counter: INT:=0;
+	Step: INT;
+	random:RAND;
+	random1:RAND;
+	random2:RANDI;
+	orderTimer : TON;
+	wait:TON;
+	orderTrigger: R_TRIG;
+	b_Type:BikeType;
+	HMI_b_Type:BikeType;
+	HMI_a1_Type:eAccessories;
+	HMI_a2_Type:eAccessories;
+	HMI_a3_Type:eAccessories;
+	HMI_a4_Type:eAccessories;
+	o_type:DINT; 
+	a_Type:eAccessories;
+	Order: BOOL;
+	bike_type:ARRAY [1..4] OF STRING:=['BMX','ELECTRIC','FOLDING','ROAD'];
+	acc_type:ARRAY [1..6] OF STRING:=['GPS','LIGHTS','BELL','LOCK','SPEEDOMETER','NONE'];
+	HMI_qty:INT;
+	uiLastOrder_ID: INT:=0;
+END_VAR
+
+
+(*#-#-#-#-#-#-#-#-#-#---Implementation---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+IF newOrderAvailable() THEN
+	uiLastOrder_ID:=GVL.OPCUA_Server.orderData.ulOrderNo;
+	orderData:= GVL.OPCUA_Server.orderData;
+	newOrder:=TRUE;
+	counter:=counter+1;
+END_IF
+
+// IF Order THEN
+// 	orderData:= HMI_ORDERDATA();
+// 	newOrder:=TRUE;
+// 	counter:=counter+1;
+// 	Order:=FALSE;
+// ELSE
+// 	IF newOrderAvailable() THEN
+// 		orderData:= getOrder();
+// 		newOrder:=TRUE;
+// 		//counter:=counter+1;
+// 	END_IF
+// END_IF

@@ -1,0 +1,11 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+FUNCTION_BLOCK FB_OPCUA_Server
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	orderData: typ_OrderData;
+END_VAR
+VAR
+END_VAR
+
+(*#-#-#-#-#-#-#-#-#-#---Implementation---#-#-#-#-#-#-#-#-#-#-#-#-#*)
