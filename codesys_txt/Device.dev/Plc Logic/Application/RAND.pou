@@ -1,0 +1,19 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+FUNCTION_BLOCK RAND
+VAR_INPUT
+	IN_diMin: DINT;
+	IN_diMax: DINT;
+END_VAR
+VAR_OUTPUT
+	di_Result: DINT;
+END_VAR
+VAR
+	di_Div: DINT;
+	ARR: ARRAY [1..100] OF INT:=[3 ,  1  , 3  , 3  , 4  , 4  , 4  , 1 ,  1   ,2  , 3   ,4  , 3   ,1  , 4  , 3  , 3   ,2   ,1  , 4  , 4   ,3  , 1   ,2   ,1 ,2   ,3   ,3  , 3  , 1  , 3   ,4  , 4  , 3   ,2  , 4  , 2  , 4  , 4  , 1  , 2  , 2  , 4  , 2  , 2  , 4   ,4   ,1  , 4  , 2 ,2   ,1   ,3  , 3  , 3   ,4   ,2   ,4   ,3   ,1   ,1   ,4   ,3   ,1   ,2   ,4   ,1   ,4   ,2   ,1   ,2   ,4   ,1   ,2   ,1, 3   ,4   ,3   ,3   ,4   ,4   ,4   ,4   ,1   ,2   ,4   ,2   ,1   ,4   ,3  , 3   ,4   ,4   ,2   ,4   ,3   ,2   ,1   ,2   ,4];
+END_VAR
+
+(*#-#-#-#-#-#-#-#-#-#---Implementation---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+di_Div:=(IN_diMax-IN_diMin); 
+di_Result:=TO_DINT(SysTimeGetMs()) MOD (di_Div + 1);
+di_Result:=ARR[di_Result];
+//di_Result:=di_Result+IN_diMin;

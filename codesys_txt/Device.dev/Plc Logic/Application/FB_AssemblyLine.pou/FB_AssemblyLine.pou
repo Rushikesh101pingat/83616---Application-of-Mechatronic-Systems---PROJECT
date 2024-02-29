@@ -1,0 +1,198 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+FUNCTION_BLOCK FB_AssemblyLine
+VAR_INPUT
+	
+	//bNewAssembly: BOOL;
+	//orderData: typ_OrderData;
+END_VAR
+VAR_OUTPUT
+	newOrder_1:BOOL;
+	tOperationTime:TIME;
+	bBusy:BOOL;
+	uiTotalBikes:UINT;
+	typeStats:typ_TypeStats;
+	accStats:typ_accStats;
+	asmStat:BOOL:=FALSE;
+	
+END_VAR
+VAR
+	orderData_1: typ_OrderData;
+	sProduct:STRING;
+	sAccessory:STRING;
+	asProducts: ARRAY [0..100] OF STRING;
+	uiProductIndex:UINT:=0;
+	tCurrentAssemblyTime:TIME;
+	tTotalAssemblytime:TIME;
+	a:INT;
+	Product:INT;
+	Accessory:INT;
+	Idle:BOOL;
+	//Assembly Time Data
+	BMX_time:TIME:=T#1S;
+	ELECTRIC_Time:TIME:=T#2S;
+	FOLDING_Time:TIME:=T#3S;
+	ROAD_Time:TIME:=T#1S;
+	GPS_Time: TIME:=T#5S;
+	LIGHTS_TIME:TIME:=T#15S;
+	BELL_TIME:TIME:=T#5S;
+	LOCK_TIME:TIME:=T#9S;
+	SPEEDO_TIME:TIME:=T#30s;
+	Assembletrig:R_TRIG;
+	counter:INT:=0;
+	k:INT:=1;
+	Counter1:INT;
+	AssemblyTimer: TON;
+	Cost: ARRAY [1..2] OF ARRAY [1..5] OF INT:=[[450,1500,400,500],[100,30,20,70,80]];
+	tCost:DINT;	
+	b:STRING;
+	Flag:INT;
+	
+	//Stock Data
+	STOCK_BMX:DINT:=30;
+	STOCK_ELECTRIC:DINT:=15;
+	STOCK_FOLDING:DINT:=10;
+	STOCK_ROAD:DINT:=20;
+	STOCK_BELL:DINT:=60;
+	STOCK_LIGHTS:DINT:=60;
+	STOCK_GPS:DINT:=60;
+	STOCK_LOCK:DINT:=60;
+	STOCK_SPEEDO:DINT:=50;
+	g:INT:=0;
+	e:INT:=0;
+	asProduct:STRING;
+	c:STRING;
+	tBikes: DINT;
+	tAcc: DINT;
+	acc1:STRING;
+	acc2:STRING;
+	acc3:STRING;
+	acc4:STRING;
+	xpos:INT;
+	bike_visu:BOOL:=FALSE;
+	box_visu:BOOL:=TRUE;
+	box_close_visu:BOOL:=TRUE;
+	Bike_Visu_Timer: TON;
+	Delay : TON;
+   	Count_delay : INT := 0;
+	countt : INT :=0;
+END_VAR
+
+(*#-#-#-#-#-#-#-#-#-#---Implementation---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+CASE  a OF
+	0: //Assembly Idle
+		Idle:=TRUE;
+		bike_visu:=FALSE;
+		box_close_visu:=TRUE;
+		xpos:=0;
+		asmStat:=FALSE;
+		IF newOrder THEN
+			counter1:=counter1+1;
+			a := 1; 
+			Busy:=TRUE;
+			tCurrentAssemblyTime:=T#0S;
+			newOrder := FALSE;	
+			Idle:=FALSE;
+		END_IF	
+	1:
+		sProduct:= orderData_1.eType;
+		IF sProduct='BMX' THEN
+			tCurrentAssemblyTime:=BMX_time*orderData_1.uiQty;
+			tCost:=Cost[1][1]*orderData_1.uiQty;
+			asProduct:=CONCAT(sProduct,'-');
+		ELSIF sProduct='Electric' THEN
+			tCurrentAssemblyTime:=ELECTRIC_Time*orderData_1.uiQty;
+			tCost:=Cost[1][2]*orderData_1.uiQty;
+			asProduct:=CONCAT(sProduct,'-');		
+		ELSIF sProduct='Folding' THEN
+			tCurrentAssemblyTime:=FOLDING_Time*orderData_1.uiQty;
+			tCost:=Cost[1][3]*orderData_1.uiQty;
+			asProduct:=CONCAT(sProduct,'-');
+		ELSIF sProduct='Road' THEN
+			tCurrentAssemblyTime:=ROAD_Time*orderData_1.uiQty;
+			tCost:=Cost[1][4]*orderData_1.uiQty;
+			asProduct:=CONCAT(sProduct,'-');
+		END_IF
+		tBikes:= tBikes+orderData_1.uiQty;
+		a:=2;		
+	2:
+		FOR k:=1 TO 4 BY 1 DO
+			sAccessory:=orderData_1.aeAccessories[k];
+			IF sAccessory='GPS' THEN
+				tCurrentAssemblyTime:=tCurrentAssemblyTime+(GPS_Time*orderData_1.uiQty);
+				tCost:=tCost+Cost[2][1]*orderData_1.uiQty;
+				asProduct:=CONCAT(asProduct,sAccessory);
+				tAcc:=tAcc+orderData_1.uiQty;
+			ELSIF sAccessory='Lights' THEN
+				tCurrentAssemblyTime:=tCurrentAssemblyTime+(LIGHTS_Time*orderData_1.uiQty);
+				tCost:=tCost+Cost[2][2]*orderData_1.uiQty;
+				asProduct:=CONCAT(asProduct,sAccessory);
+				tAcc:=tAcc+orderData_1.uiQty;
+			ELSIF sAccessory='Bell' THEN
+				tCurrentAssemblyTime:=tCurrentAssemblyTime+(BELL_Time*orderData_1.uiQty);
+				tCost:=tCost+Cost[2][3]*orderData_1.uiQty;
+				asProduct:=CONCAT(asProduct,sAccessory);
+				tAcc:=tAcc+orderData_1.uiQty;
+			ELSIF sAccessory='Lock' THEN
+				tCurrentAssemblyTime:=tCurrentAssemblyTime+(LOCK_Time*orderData_1.uiQty);
+				tCost:=tCost+Cost[2][4]*orderData_1.uiQty;
+				asProduct:=CONCAT(asProduct,sAccessory);
+				tAcc:=tAcc+orderData_1.uiQty;
+			ELSIF sAccessory='Speedometer' THEN
+				tCurrentAssemblyTime:=tCurrentAssemblyTime+(SPEEDO_Time*orderData_1.uiQty);
+				tCost:=tCost+Cost[2][5]*orderData_1.uiQty;
+				asProduct:=CONCAT(asProduct,sAccessory);
+				tAcc:=tAcc+orderData_1.uiQty;
+			ELSE
+				tCurrentAssemblyTime:=tCurrentAssemblyTime;
+				tCost:=tCost;
+				asProduct:=asProduct;
+				tAcc:=tAcc;
+			END_IF
+		END_FOR
+		acc1:=orderData_1.aeAccessories[1];
+		acc2:=orderData_1.aeAccessories[2];
+		acc3:=orderData_1.aeAccessories[3];
+		acc4:=orderData_1.aeAccessories[4];
+		tTotalAssemblytime:=tTotalAssemblytime+tCurrentAssemblyTime;
+		k:=1;
+		a:=3;	
+	3:	
+		xpos:=330;
+		Bike_Visu_Timer(IN:=NOT Bike_Visu_Timer.Q, PT:=(tCurrentAssemblyTime/2));
+		IF Bike_Visu_Timer.Q THEN
+			xpos:=660;
+			a:=4;	
+		END_IF
+	4:
+		AssemblyTimer(IN:=NOT AssemblyTimer.Q, PT:=tCurrentAssemblyTime/2);
+		IF AssemblyTimer.Q THEN
+			asProducts[g]:=asProduct;
+			g:=g+1;
+			xpos:=990;
+			AssemblyTimer(IN:=FALSE);
+			a:=5;
+		END_IF
+	5:
+		countt:= countt + 1;
+		Delay(IN:=NOT Delay.Q, PT:=T#5S);
+		IF (Delay.Q) THEN
+			bike_visu:=TRUE;
+			box_visu:=FALSE;
+			a:=6;
+		END_IF
+	6:
+		Delay(IN:=NOT Delay.Q, PT:=T#5S);
+		IF (Delay.Q) THEN
+			box_close_visu:=FALSE;
+			box_visu:=TRUE;
+			a:=7;
+		END_IF
+	7:
+		Delay(IN:=NOT Delay.Q, PT:=T#5S);
+		IF (Delay.Q) THEN
+			Busy:=FALSE;
+			asmStat:=TRUE;
+			a:=0;
+		END_IF		
+END_CASE
+

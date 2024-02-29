@@ -1,0 +1,42 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+PROGRAM PLC_PRG
+VAR	
+fbWebServer:FB_WebServer;
+fbAssemblyLine:ARRAY [0..4] OF FB_AssemblyLine;
+fbAssemblyAdd: ARRAY[0..4] OF POINTER TO fb_AssemblyLine :=	[ADR(fbAssemblyLine[0]),
+																 ADR(fbAssemblyLine[1]),
+																 ADR(fbAssemblyLine[2]),
+																 ADR(fbAssemblyLine[3]),
+																 ADR(fbAssemblyLine[4])];
+fbOrderParser: FB_OrderParser(pFB_Server := ADR(fbWebServer),apFB_AssemblyLine:=fbAssemblyAdd);
+i:INT;
+fb_Ass: FB_AssemblyLine;
+assem_line:INT;
+assembly_line: ARRAY [0..4] OF STRING:=['ASSEMBLY_LINE_1','ASSEMBLY_LINE_2','ASSEMBLY_LINE_3','ASSEMBLY_LINE_4','ASSEMBLY_LINE_5'];
+Web_Visu: ARRAY [1..3] OF STRING:=['HMI_ORDER','Visu_Order','Visu_Assembly_Display'];
+web: INT;
+END_VAR
+(*#-#-#-#-#-#-#-#-#-#---Implementation---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+fbWebServer(); //simulate web orders
+fbOrderParser();
+FOR I:=0 TO 4 BY 1 DO
+	fbAssemblyLine[i]();
+END_FOR
+IF web=1 THEN
+	CurrentVisu:='HMI_ORDER';
+ELSIF web=2 THEN
+	CurrentVisu:='Visu_Order';
+ELSIF web=3 THEN
+	CurrentVisu:='Visu_Assembly_Display';
+END_IF
+IF assem_line=0 THEN
+	fb_Ass:=fbAssemblyLine[0];
+ELSIF assem_line=1 THEN
+	fb_Ass:=fbAssemblyLine[1];
+ELSIF assem_line=2 THEN
+	fb_Ass:=fbAssemblyLine[2];
+ELSIF assem_line=3 THEN
+	fb_Ass:=fbAssemblyLine[3];
+ELSIF assem_line=4 THEN
+	fb_Ass:=fbAssemblyLine[4];	
+END_IF

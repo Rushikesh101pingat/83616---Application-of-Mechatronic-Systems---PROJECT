@@ -1,0 +1,9 @@
+(*#-#-#-#-#-#-#-#-#-#---Declaration---#-#-#-#-#-#-#-#-#-#-#-#-#*)
+TYPE typ_TypeStats :
+STRUCT
+	uiBMX:UINT;
+	uiROAD:UINT;
+	uiFOLDING:UINT;
+	uiELECTRIC:UINT;
+END_STRUCT
+END_TYPE
